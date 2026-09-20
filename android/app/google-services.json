@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464989734430",
+    "project_id": "poc-tcc-cuidador",
+    "storage_bucket": "poc-tcc-cuidador.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464989734430:android:c7ccfb78e330c4ca74500f",
+        "android_client_info": {
+          "package_name": "com.cuidador.flutter_application_cuidador"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrNYvsUv9GRZrqtt_ctiUNbK-4KANVrO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

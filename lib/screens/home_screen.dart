@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import 'daily_agenda_screen.dart';
 import 'welcome_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,12 +12,28 @@ class HomeScreen extends StatelessWidget {
   Future<void> _sair(BuildContext context) async {
     await AuthService().sair();
 
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
 
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       (route) => false,
     );
+  }
+
+  void _abrirAgendaDiaria(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const DailyAgendaScreen()));
+  }
+
+  void _mostrarFuncionalidadeEmBreve(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Funcionalidade em desenvolvimento.')),
+      );
   }
 
   @override
@@ -35,7 +52,9 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             tooltip: 'Sair',
             icon: const Icon(Icons.logout),
-            onPressed: () => _sair(context),
+            onPressed: () {
+              _sair(context);
+            },
           ),
         ],
       ),
@@ -52,9 +71,7 @@ class HomeScreen extends StatelessWidget {
                   color: const Color(0xFF1F2937),
                 ),
               ),
-
               const SizedBox(height: 8),
-
               const Text(
                 'Aqui ficará a rotina diária, os registros de comportamento e os cuidados importantes.',
                 style: TextStyle(
@@ -63,32 +80,32 @@ class HomeScreen extends StatelessWidget {
                   color: Color(0xFF6B7280),
                 ),
               ),
-
               const SizedBox(height: 24),
-
               _HomeCard(
                 icon: Icons.calendar_today_outlined,
                 title: 'Agenda diária',
                 description: 'Consultas, terapias, escola e atividades.',
-                onTap: () {},
+                onTap: () {
+                  _abrirAgendaDiaria(context);
+                },
               ),
-
               const SizedBox(height: 12),
-
               _HomeCard(
                 icon: Icons.psychology_alt_outlined,
                 title: 'Registro de comportamento',
                 description: 'Anote observações importantes da rotina.',
-                onTap: () {},
+                onTap: () {
+                  _mostrarFuncionalidadeEmBreve(context);
+                },
               ),
-
               const SizedBox(height: 12),
-
               _HomeCard(
                 icon: Icons.group_outlined,
                 title: 'Rede de apoio',
                 description: 'Gerencie cuidadores e pessoas autorizadas.',
-                onTap: () {},
+                onTap: () {
+                  _mostrarFuncionalidadeEmBreve(context);
+                },
               ),
             ],
           ),
@@ -124,9 +141,7 @@ class _HomeCard extends StatelessWidget {
           child: Row(
             children: [
               Icon(icon, size: 32, color: const Color(0xFF5B6EF5)),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,9 +152,7 @@ class _HomeCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 4),
-
                     Text(
                       description,
                       style: const TextStyle(color: Color(0xFF6B7280)),
@@ -147,7 +160,6 @@ class _HomeCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const Icon(Icons.chevron_right, color: Color(0xFF9CA3AF)),
             ],
           ),

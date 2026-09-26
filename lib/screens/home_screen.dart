@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import 'behavior_record_screen.dart';
+import 'crisis_mode_screen.dart';
 import 'daily_agenda_screen.dart';
 import 'welcome_screen.dart';
 
@@ -26,6 +28,18 @@ class HomeScreen extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const DailyAgendaScreen()));
+  }
+
+  void _abrirRegistroComportamento(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const BehaviorRecordScreen()));
+  }
+
+  void _abrirModoCrise(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const CrisisModeScreen()));
   }
 
   void _mostrarFuncionalidadeEmBreve(BuildContext context) {
@@ -59,54 +73,117 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Olá, $nome!',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF1F2937),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Acompanhe a rotina, os comportamentos e os cuidados importantes da criança.',
+              style: TextStyle(
+                fontSize: 16,
+                height: 1.4,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _CrisisActionCard(
+              onTap: () {
+                _abrirModoCrise(context);
+              },
+            ),
+            const SizedBox(height: 18),
+            _HomeCard(
+              icon: Icons.calendar_today_outlined,
+              title: 'Agenda diária',
+              description: 'Consultas, terapias, escola e atividades.',
+              onTap: () {
+                _abrirAgendaDiaria(context);
+              },
+            ),
+            const SizedBox(height: 12),
+            _HomeCard(
+              icon: Icons.psychology_alt_outlined,
+              title: 'Comportamento e crises',
+              description:
+                  'Visualize registros, filtros, crises e observações.',
+              onTap: () {
+                _abrirRegistroComportamento(context);
+              },
+            ),
+            const SizedBox(height: 12),
+            _HomeCard(
+              icon: Icons.group_outlined,
+              title: 'Rede de apoio',
+              description: 'Gerencie cuidadores e pessoas autorizadas.',
+              onTap: () {
+                _mostrarFuncionalidadeEmBreve(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CrisisActionCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _CrisisActionCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFFFFEBEE),
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
             children: [
-              Text(
-                'Olá, $nome!',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1F2937),
+              Container(
+                width: 54,
+                height: 54,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE53935),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.emergency_outlined,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Aqui ficará a rotina diária, os registros de comportamento e os cuidados importantes.',
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.4,
-                  color: Color(0xFF6B7280),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Registrar crise agora',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFB71C1C),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Inicie um registro rápido, acompanhe o tempo e finalize quando a criança se acalmar.',
+                      style: TextStyle(color: Color(0xFF7F1D1D), height: 1.3),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
-              _HomeCard(
-                icon: Icons.calendar_today_outlined,
-                title: 'Agenda diária',
-                description: 'Consultas, terapias, escola e atividades.',
-                onTap: () {
-                  _abrirAgendaDiaria(context);
-                },
-              ),
-              const SizedBox(height: 12),
-              _HomeCard(
-                icon: Icons.psychology_alt_outlined,
-                title: 'Registro de comportamento',
-                description: 'Anote observações importantes da rotina.',
-                onTap: () {
-                  _mostrarFuncionalidadeEmBreve(context);
-                },
-              ),
-              const SizedBox(height: 12),
-              _HomeCard(
-                icon: Icons.group_outlined,
-                title: 'Rede de apoio',
-                description: 'Gerencie cuidadores e pessoas autorizadas.',
-                onTap: () {
-                  _mostrarFuncionalidadeEmBreve(context);
-                },
-              ),
+              const Icon(Icons.chevron_right, color: Color(0xFFB71C1C)),
             ],
           ),
         ),

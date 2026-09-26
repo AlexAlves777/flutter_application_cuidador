@@ -37,7 +37,9 @@ class AuthService {
       'nome': nome.trim(),
       'email': email.trim(),
       'perfil': perfil,
+      'codigoVinculo': _gerarCodigoVinculo(usuario.uid),
       'statusVinculo': _definirStatusInicial(perfil),
+      'childIdAtual': null,
       'criadoEm': FieldValue.serverTimestamp(),
       'atualizadoEm': FieldValue.serverTimestamp(),
     });
@@ -84,6 +86,14 @@ class AuthService {
     return 'precisa_definir_crianca';
   }
 
+  String _gerarCodigoVinculo(String uid) {
+    if (uid.length < 6) {
+      return uid.toUpperCase();
+    }
+
+    return uid.substring(0, 6).toUpperCase();
+  }
+
   static String traduzirErro(FirebaseAuthException erro) {
     switch (erro.code) {
       case 'invalid-email':
@@ -93,7 +103,8 @@ class AuthService {
       case 'user-not-found':
         return 'Usuário não encontrado.';
       case 'wrong-password':
-        return 'Senha incorreta.';
+      case 'invalid-credential':
+        return 'E-mail ou senha incorretos.';
       case 'email-already-in-use':
         return 'Este e-mail já está em uso.';
       case 'weak-password':

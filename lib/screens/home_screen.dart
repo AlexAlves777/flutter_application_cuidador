@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import 'behavior_record_screen.dart';
 import 'crisis_mode_screen.dart';
 import 'daily_agenda_screen.dart';
+import 'support_network_screen.dart';
 import 'welcome_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -42,12 +43,10 @@ class HomeScreen extends StatelessWidget {
     ).push(MaterialPageRoute(builder: (_) => const CrisisModeScreen()));
   }
 
-  void _mostrarFuncionalidadeEmBreve(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text('Funcionalidade em desenvolvimento.')),
-      );
+  void _abrirRedeApoio(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SupportNetworkScreen()));
   }
 
   @override
@@ -123,7 +122,7 @@ class HomeScreen extends StatelessWidget {
               title: 'Rede de apoio',
               description: 'Gerencie cuidadores e pessoas autorizadas.',
               onTap: () {
-                _mostrarFuncionalidadeEmBreve(context);
+                _abrirRedeApoio(context);
               },
             ),
           ],

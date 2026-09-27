@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
 import 'behavior_record_screen.dart';
+import 'child_info_screen.dart';
 import 'crisis_mode_screen.dart';
 import 'daily_agenda_screen.dart';
 import 'support_network_screen.dart';
@@ -23,6 +24,12 @@ class HomeScreen extends StatelessWidget {
       MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       (route) => false,
     );
+  }
+
+  void _abrirInformacoesCrianca(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ChildInfoScreen()));
   }
 
   void _abrirAgendaDiaria(BuildContext context) {
@@ -98,6 +105,16 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 18),
+            _HomeCard(
+              icon: Icons.child_care_outlined,
+              title: 'Informações da criança',
+              description:
+                  'Dados, alergias, sensibilidades e configurações de crise.',
+              onTap: () {
+                _abrirInformacoesCrianca(context);
+              },
+            ),
+            const SizedBox(height: 12),
             _HomeCard(
               icon: Icons.calendar_today_outlined,
               title: 'Agenda diária',

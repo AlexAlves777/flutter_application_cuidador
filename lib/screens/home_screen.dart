@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
+import 'account_screen.dart';
 import 'behavior_record_screen.dart';
 import 'child_info_screen.dart';
 import 'crisis_mode_screen.dart';
 import 'daily_agenda_screen.dart';
 import 'support_network_screen.dart';
-import 'welcome_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String? nomeUsuario;
 
   const HomeScreen({super.key, this.nomeUsuario});
 
-  Future<void> _sair(BuildContext context) async {
-    await AuthService().sair();
-
-    if (!context.mounted) {
-      return;
-    }
-
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-      (route) => false,
-    );
+  void _abrirMinhaConta(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const AccountScreen()));
   }
 
   void _abrirInformacoesCrianca(BuildContext context) {
@@ -70,10 +62,10 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: const Color(0xFFF7F8FC),
         actions: [
           IconButton(
-            tooltip: 'Sair',
-            icon: const Icon(Icons.logout),
+            tooltip: 'Minha conta',
+            icon: const Icon(Icons.account_circle_outlined),
             onPressed: () {
-              _sair(context);
+              _abrirMinhaConta(context);
             },
           ),
         ],

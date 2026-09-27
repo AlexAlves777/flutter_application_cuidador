@@ -6,6 +6,7 @@ import 'child_info_screen.dart';
 import 'child_selector_screen.dart';
 import 'crisis_mode_screen.dart';
 import 'daily_agenda_screen.dart';
+import 'reports_screen.dart';
 import 'support_network_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -19,16 +20,16 @@ class HomeScreen extends StatelessWidget {
     ).push(MaterialPageRoute(builder: (_) => const AccountScreen()));
   }
 
-  void _abrirInformacoesCrianca(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const ChildInfoScreen()));
-  }
-
   void _abrirSelecionarCrianca(BuildContext context) {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const ChildSelectorScreen()));
+  }
+
+  void _abrirInformacoesCrianca(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ChildInfoScreen()));
   }
 
   void _abrirAgendaDiaria(BuildContext context) {
@@ -53,6 +54,12 @@ class HomeScreen extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const SupportNetworkScreen()));
+  }
+
+  void _abrirRelatorios(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ReportsScreen()));
   }
 
   @override
@@ -104,6 +111,15 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 18),
+            _HomeCard(
+              icon: Icons.insights_outlined,
+              title: 'Resumo e relatórios',
+              description: 'Indicadores da rotina, crises e comportamento.',
+              onTap: () {
+                _abrirRelatorios(context);
+              },
+            ),
+            const SizedBox(height: 12),
             _HomeCard(
               icon: Icons.family_restroom_outlined,
               title: 'Crianças vinculadas',

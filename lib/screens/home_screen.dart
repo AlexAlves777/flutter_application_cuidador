@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'account_screen.dart';
 import 'behavior_record_screen.dart';
 import 'child_info_screen.dart';
+import 'child_selector_screen.dart';
 import 'crisis_mode_screen.dart';
 import 'daily_agenda_screen.dart';
 import 'support_network_screen.dart';
@@ -22,6 +23,12 @@ class HomeScreen extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const ChildInfoScreen()));
+  }
+
+  void _abrirSelecionarCrianca(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ChildSelectorScreen()));
   }
 
   void _abrirAgendaDiaria(BuildContext context) {
@@ -97,6 +104,15 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 18),
+            _HomeCard(
+              icon: Icons.family_restroom_outlined,
+              title: 'Crianças vinculadas',
+              description: 'Selecione a criança ativa ou cadastre outra.',
+              onTap: () {
+                _abrirSelecionarCrianca(context);
+              },
+            ),
+            const SizedBox(height: 12),
             _HomeCard(
               icon: Icons.child_care_outlined,
               title: 'Informações da criança',

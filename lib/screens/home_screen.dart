@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'account_screen.dart';
@@ -9,10 +11,48 @@ import 'daily_agenda_screen.dart';
 import 'reports_screen.dart';
 import 'support_network_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final String? nomeUsuario;
 
   const HomeScreen({super.key, this.nomeUsuario});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<_HomeUserData> _homeUserFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeUserFuture = _loadHomeUserData();
+  }
+
+  Future<_HomeUserData> _loadHomeUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return _HomeUserData(nome: widget.nomeUsuario ?? 'usuário', perfil: '');
+    }
+
+    final userDocument = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final userData = userDocument.data();
+
+    final nomeFirestore = userData?['nome']?.toString().trim();
+    final perfilFirestore = userData?['perfil']?.toString().trim();
+
+    return _HomeUserData(
+      nome: nomeFirestore != null && nomeFirestore.isNotEmpty
+          ? nomeFirestore
+          : widget.nomeUsuario ?? 'usuário',
+      perfil: perfilFirestore ?? '',
+    );
+  }
 
   void _abrirMinhaConta(BuildContext context) {
     Navigator.of(
@@ -64,112 +104,136 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final nome = nomeUsuario?.trim().isNotEmpty == true
-        ? nomeUsuario!.trim()
-        : 'usuário';
+    return FutureBuilder<_HomeUserData>(
+      future: _homeUserFuture,
+      builder: (context, snapshot) {
+        final homeUser =
+            snapshot.data ??
+            _HomeUserData(nome: widget.nomeUsuario ?? 'usuário', perfil: '');
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
-      appBar: AppBar(
-        title: const Text('Início'),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF7F8FC),
-        actions: [
-          IconButton(
-            tooltip: 'Minha conta',
-            icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () {
-              _abrirMinhaConta(context);
-            },
+        return Scaffold(
+          backgroundColor: const Color(0xFFF7F8FC),
+          appBar: AppBar(
+            title: const Text('Início'),
+            centerTitle: true,
+            backgroundColor: const Color(0xFFF7F8FC),
+            actions: [
+              IconButton(
+                tooltip: 'Minha conta',
+                icon: const Icon(Icons.account_circle_outlined),
+                onPressed: () {
+                  _abrirMinhaConta(context);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(24),
-          children: [
-            Text(
-              'Olá, $nome!',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF1F2937),
-              ),
+          body: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.all(24),
+              children: [
+                Text(
+                  'Olá, ${homeUser.nome}!',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1F2937),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Acompanhe a rotina, os comportamentos e os cuidados importantes da criança.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.4,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _CrisisActionCard(
+                  onTap: () {
+                    _abrirModoCrise(context);
+                  },
+                ),
+                const SizedBox(height: 18),
+                _HomeCard(
+                  icon: Icons.insights_outlined,
+                  title: 'Resumo e relatórios',
+                  description: 'Indicadores da rotina, crises e comportamento.',
+                  onTap: () {
+                    _abrirRelatorios(context);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _HomeCard(
+                  icon: Icons.family_restroom_outlined,
+                  title: 'Crianças vinculadas',
+                  description: 'Selecione a criança ativa ou cadastre outra.',
+                  onTap: () {
+                    _abrirSelecionarCrianca(context);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _HomeCard(
+                  icon: Icons.child_care_outlined,
+                  title: 'Informações da criança',
+                  description:
+                      'Dados, alergias, sensibilidades e configurações de crise.',
+                  onTap: () {
+                    _abrirInformacoesCrianca(context);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _HomeCard(
+                  icon: Icons.calendar_today_outlined,
+                  title: 'Agenda diária',
+                  description: 'Consultas, terapias, escola e atividades.',
+                  onTap: () {
+                    _abrirAgendaDiaria(context);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _HomeCard(
+                  icon: Icons.psychology_alt_outlined,
+                  title: 'Comportamento e crises',
+                  description:
+                      'Visualize registros, filtros, crises e observações.',
+                  onTap: () {
+                    _abrirRegistroComportamento(context);
+                  },
+                ),
+                if (homeUser.canManageSupportNetwork) ...[
+                  const SizedBox(height: 12),
+                  _HomeCard(
+                    icon: Icons.group_outlined,
+                    title: 'Rede de apoio',
+                    description: 'Gerencie cuidadores e pessoas autorizadas.',
+                    onTap: () {
+                      _abrirRedeApoio(context);
+                    },
+                  ),
+                ],
+              ],
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Acompanhe a rotina, os comportamentos e os cuidados importantes da criança.',
-              style: TextStyle(
-                fontSize: 16,
-                height: 1.4,
-                color: Color(0xFF6B7280),
-              ),
-            ),
-            const SizedBox(height: 24),
-            _CrisisActionCard(
-              onTap: () {
-                _abrirModoCrise(context);
-              },
-            ),
-            const SizedBox(height: 18),
-            _HomeCard(
-              icon: Icons.insights_outlined,
-              title: 'Resumo e relatórios',
-              description: 'Indicadores da rotina, crises e comportamento.',
-              onTap: () {
-                _abrirRelatorios(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            _HomeCard(
-              icon: Icons.family_restroom_outlined,
-              title: 'Crianças vinculadas',
-              description: 'Selecione a criança ativa ou cadastre outra.',
-              onTap: () {
-                _abrirSelecionarCrianca(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            _HomeCard(
-              icon: Icons.child_care_outlined,
-              title: 'Informações da criança',
-              description:
-                  'Dados, alergias, sensibilidades e configurações de crise.',
-              onTap: () {
-                _abrirInformacoesCrianca(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            _HomeCard(
-              icon: Icons.calendar_today_outlined,
-              title: 'Agenda diária',
-              description: 'Consultas, terapias, escola e atividades.',
-              onTap: () {
-                _abrirAgendaDiaria(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            _HomeCard(
-              icon: Icons.psychology_alt_outlined,
-              title: 'Comportamento e crises',
-              description:
-                  'Visualize registros, filtros, crises e observações.',
-              onTap: () {
-                _abrirRegistroComportamento(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            _HomeCard(
-              icon: Icons.group_outlined,
-              title: 'Rede de apoio',
-              description: 'Gerencie cuidadores e pessoas autorizadas.',
-              onTap: () {
-                _abrirRedeApoio(context);
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
+  }
+}
+
+class _HomeUserData {
+  final String nome;
+  final String perfil;
+
+  const _HomeUserData({required this.nome, required this.perfil});
+
+  bool get canManageSupportNetwork {
+    final normalizedProfile = perfil.toLowerCase();
+
+    return normalizedProfile == 'pai' ||
+        normalizedProfile == 'mãe' ||
+        normalizedProfile == 'mae' ||
+        normalizedProfile == 'responsável principal' ||
+        normalizedProfile == 'responsavel principal';
   }
 }
 

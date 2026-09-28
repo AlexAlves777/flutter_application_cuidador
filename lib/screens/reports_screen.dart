@@ -10,7 +10,6 @@ class ReportsScreen extends StatefulWidget {
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  static const _primary = Color(0xFF5B6EF5);
   static const _pageBackground = Color(0xFFF7F8FC);
 
   final _firestore = FirebaseFirestore.instance;
